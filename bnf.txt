@@ -1,0 +1,22 @@
+<eof> ::= "\0"
+<eol> ::= "\n"
+<whitespace> ::= "\r" | "\t" | " "
+<add> ::= "+" | "-"
+<mul> ::= "*" | "/"
+<digit> ::= "1".."9"
+<identifier_start> ::= "a".."z" | "A".."Z" | "_"
+<identifier_body> ::= <identifier_start> | <digit>
+<identifier_more> ::= <identifier_body> | <identifier_body> <identifier_more>
+<identifier> ::= <identifier_start> | <identifier_star> <identifier_more>
+<primary> ::= <identifier> | <digit>
+
+<unit> ::= <primary> | <group>
+<term> ::= <unit> | <unit> <mul> <term>
+<factor> ::= <term> | <term> <add> <factor>
+<group> ::= "(" <factor> ")"
+
+<assignment> ::= <identifier> "=" <factor>
+
+<expr> ::= <assignment> | <factor> | <eof>
+
+<program> ::== <expr> | <expr> <eol> <program>
