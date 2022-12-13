@@ -1,4 +1,6 @@
 use std::io;
+use std::fmt::Write as _;
+use std::io::prelude::*;
 
 fn main() {
     //let text = "a = 0";
@@ -16,8 +18,17 @@ fn main() {
 
     let mut e = ast::evaluator::Evaluator::new_interactive();
     loop {
+        // output
+        let mut output = String::new();
+        let _ = write!(output, ">> ");
+        let _ = std::io::stdout().write_all(output.as_bytes());
+        std::io::stdout().flush().unwrap();
+
+        // input
         let mut buffer = String::new();
         io::stdin().read_line(&mut buffer).unwrap();
+
+        // do stuff
         if buffer == "exit\n" {
             break;
         }
@@ -25,7 +36,5 @@ fn main() {
             Ok(eval) => println!("{}", eval),
             Err(e) => println!("{}", e),
         }
-
-
     }
 }
