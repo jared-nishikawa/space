@@ -47,6 +47,24 @@ impl Factor {
             more: None,
         }
     }
+
+    pub fn to_primary(&mut self) -> Option<Primary> {
+        match self.more {
+            None => {
+                match self.term.more {
+                    None => {
+                        let u = self.term.unit.clone();
+                        match u {
+                            Unit::Primary(p) => Some(p),
+                            Unit::Group(_) => None,
+                        }
+                    }
+                    Some(_) => None,
+                }
+            }
+            Some(_) => None,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]

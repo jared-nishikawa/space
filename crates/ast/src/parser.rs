@@ -202,66 +202,46 @@ mod tests {
     #[test]
     fn parse_equals1() {
         let text = "a = 0";
-        let nodes = Parser::new(text).unwrap().parse().unwrap();
-        assert_eq!(nodes.len(), 1);
-        match &nodes[0] {
-            Node::Infix(_, _, _) => assert_eq!(true, true),
-            _ => assert_eq!(true, false),
+        let exprs = Parser::new(text).unwrap().parse().unwrap();
+        assert_eq!(exprs.len(), 1);
+        match &exprs[0] {
+            Expr::Assignment(_) => assert!(true),
+            _ => assert!(false),
         }
     }
 
     #[test]
     fn parse_equals2() {
         let text = "a = \"some string\"";
-        let nodes = Parser::new(text).unwrap().parse().unwrap();
-        assert_eq!(nodes.len(), 1);
-        match &nodes[0] {
-            Node::Infix(_, r, _) => {
-                match &**r {
-                    Node::String(token) => {
-                        match token {
-                            Token::String(_, s) => assert_eq!(s, "some string"),
-                            _ => assert_eq!(true, false),
-                        }
-                    },
-                    _ => assert_eq!(true, false),
+        let exprs = Parser::new(text).unwrap().parse().unwrap();
+        assert_eq!(exprs.len(), 1);
+        match &exprs[0] {
+            Expr::Assignment(a) => match a.clone().factor.to_primary() {
+                Some(p) => match p {
+                    Primary::String(s) => assert_eq!(s, "some string"),
+                    _ => assert!(false),
                 }
-            },
-            _ => assert_eq!(true, false),
+                None => assert!(false),
+            }
+            _ => assert!(false),
         }
     }
 
     #[test]
     fn parse_equals3() {
         let text = "a = \"some string with a \\\"quote\\\" in the middle\"";
-        let nodes = Parser::new(text).unwrap().parse().unwrap();
-        assert_eq!(nodes.len(), 1);
-        match &nodes[0] {
-            Node::Infix(_, r, _) => {
-                match &**r {
-                    Node::String(token) => {
-                        match token {
-                            Token::String(_, s) => assert_eq!(s, "some string with a \"quote\" in the middle"),
-                            _ => assert_eq!(true, false),
-                        }
-                    },
-                    _ => assert_eq!(true, false),
+        let exprs = Parser::new(text).unwrap().parse().unwrap();
+        assert_eq!(exprs.len(), 1);
+        match &exprs[0] {
+            Expr::Assignment(a) => match a.clone().factor.to_primary() {
+                Some(p) => match p {
+                    Primary::String(s) => assert_eq!(s, "some string with a \"quote\" in the middle"),
+                    _ => assert!(false),
                 }
-            },
-            _ => assert_eq!(true, false),
+                None => assert!(false),
+            }
+            _ => assert!(false),
         }
     }
-
-    #[test]
-    fn parse_plus1() {
-        let text = "a = b + c";
-        let nodes = Parser::new(text).unwrap().parse().unwrap();
-        assert_eq!(nodes.len(), 1);
-        match &nodes[0] {
-            Node::Infix(_, _, _) => assert_eq!(true, true),
-            _ => assert_eq!(true, false),
-        }
-    }
-
 
 }

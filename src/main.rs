@@ -21,8 +21,11 @@ fn main() {
         if buffer == "exit\n" {
             break;
         }
-        let eval = e.evaluate_interactive(&buffer).unwrap();
-        print!("{}\n", eval);
+        match e.evaluate_interactive(&buffer) {
+            Ok(eval) => println!("{}", eval),
+            Err(e) => println!("{}", e),
+        }
+
 
     }
 }

@@ -239,3 +239,28 @@ impl Evaluator {
         Error::EvalError(format!("eval_error: {}", msg))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn eval1() {
+        let text = "a = 9\nb = 4\nc = (a + b) * (a - b)";
+        let exprs = Evaluator::new(text).unwrap().evaluate().unwrap();
+        assert_eq!(exprs.len(), 3);
+        match &exprs[2] {
+            Expr::Assignment(a) => match a.factor.clone().to_primary() {
+                Some(p) => {
+                    match p {
+                        Primary::Integer(i) => assert_eq!(i, 65),
+                        _ => assert_eq!(0, 1),
+
+                    }
+                }
+                None => assert_eq!(0, 2),
+            }
+            _ => assert_eq!(0, 3),
+        }
+    }
+}
